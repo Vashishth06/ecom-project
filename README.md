@@ -74,7 +74,7 @@ ecom-project/
 ├── src/
 │   ├── config/
 │   │   ├── __init__.py
-│   │   ├── table_config.py      # Central configuration - UPDATE THIS
+│   │   ├── table_config.py      # Central configuration
 │   │   └── spark_config.py
 │   └── utils/
 │       ├── __init__.py
@@ -166,11 +166,11 @@ ecom-project/
    
    **Gold Layer:**
 ```
-   notebooks/gold/01_create_dim_customers.ipynb
-   notebooks/gold/02_create_dim_sellers.ipynb
-   notebooks/gold/03_create_dim_date.ipynb
-   notebooks/gold/04_create_fact_orders.ipynb
-   notebooks/gold/05_create_fact_sales_summary.ipynb
+   notebooks/gold/01_dim_customers.ipynb
+   notebooks/gold/02_dim_sellers.ipynb
+   notebooks/gold/03_dim_date.ipynb
+   notebooks/gold/04_fact_orders.ipynb
+   notebooks/gold/05_fact_sales_summary.ipynb
 ```
 
 ## Performance Metrics
