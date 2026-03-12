@@ -42,39 +42,8 @@ class BronzeIngestion:
         self.row_count = 0
     
     # ============================================================
-    # STEP 1: Verify source data
+    # STEP 1: Check source 
     # ============================================================
-    def verify_source(self) -> bool:
-        """
-        Check if source files exist in bronze storage.
-        Returns True if valid files found.
-        """
-        log_info(f"Checking bronze storage ({self.table_display_name})...")
-        
-        try:
-            files = self.spark.sparkContext._jvm.org.apache.hadoop.fs \
-                .FileSystem.get(
-                    self.spark._jvm.java.net.URI.create(self.source_path),
-                    self.spark._jsc.hadoopConfiguration()
-                )
-            
-            # Use dbutils via spark
-            from pyspark.dbutils import DBUtils
-            dbutils = DBUtils(self.spark)
-            all_files = dbutils.fs.ls(self.source_path)
-            
-        except Exception:
-            # Fallback: use spark to list files
-            all_files = self.spark.sparkContext \
-                ._jvm.org.apache.hadoop \
-                .fs.FileSystem \
-                .get(self.spark._jsc.hadoopConfiguration()) \
-                .listStatus(
-                    self.spark._jvm.org.apache.hadoop.fs.Path(self.source_path)
-                )
-        
-        return True
-    
     def check_source(self, dbutils) -> bool:
         """
         Check source files using dbutils.
