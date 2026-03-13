@@ -46,7 +46,7 @@ class GoldTransformation:
                 size_gb = detail['sizeInBytes'] / (1024**3)
                 log_metric(f"Source size ({source_table})", f"{size_gb:.2f} GB")
             except:
-                pass
+                log_error(f"Could not read metadata for {source_table}: {str(e)}")
         
         log_metric("Total sources read", len(self.source_dfs))
         return self.source_dfs
