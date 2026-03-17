@@ -5,7 +5,7 @@ Reusable data quality checking functions
 import builtins
 from typing import List
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, count, when
+from pyspark.sql.functions import col, count, when, sum
 from utils.logger import log_info, log_metric, log_error
 
 
@@ -33,8 +33,9 @@ def check_nulls(df: DataFrame, table_name: str) -> dict:
         log_info("No null values found in any column")
     else:
         log_info(f"Nulls found in {len(columns_with_nulls)} columns:")
+        total_rows = df.count()
         for col_name, null_count in columns_with_nulls.items():
-            pct = (null_count / df.count()) * 100
+            pct = (null_count / total_rows) * 100
             print(f"{col_name}: {null_count:,} nulls ({pct:.2f}%)")
     
     return null_counts
@@ -190,10 +191,14 @@ def check_value_ranges(df: DataFrame, table_name: str, columns: list = None) -> 
     stats.show(truncate=False)
     
     # Check for negative values (often invalid)
+    neg_counts = df.select([
+        _sum(when(col(c) < 0, 1).otherwise(0)).alias(c)
+        for c in numeric_cols
+    ]).collect()[0].asDict()
+    
     for c in numeric_cols:
-        negative_count = df.filter(col(c) < 0).count()
-        if negative_count > 0:
-            log_info(f"{c}: {negative_count:,} negative values found")
+        if neg_counts[c] > 0:
+            log_info(f"{c}: {neg_counts[c]:,} negative values found")
         else:
             log_info(f"{c}: No negative values")
 
